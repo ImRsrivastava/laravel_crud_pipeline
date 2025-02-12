@@ -14,7 +14,7 @@
         @csrf
 
         <div class="mb-3">
-            <label for="inputName" class="form-label"><strong>Name:</strong></label>
+            <label for="inputName" class="form-label"><strong>Name of product:</strong></label>
             <input 
                 type="text" 
                 name="name" 

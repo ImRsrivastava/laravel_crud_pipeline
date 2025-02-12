@@ -2,6 +2,8 @@ pipeline {
     agent any
 
     environment {
+        DEPLOY_FOLDER="/var/www/html/laravel_crud/"
+        GIT_BRANCH="master"
         TEST_SERVER_IP="15.207.71.152"
     }
 
