@@ -1,0 +1,43 @@
+version: "3"
+services:
+    laravel_crud_project:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8081:8000"
+        volumes:
+            - "./:/var/www/html/"
+        depends_on:
+            - laravel_crud_db
+        networks: 
+            - default
+
+
+    phpmyadmin:
+        image: phpmyadmin
+        ports:
+            - "82:80"
+        depends_on:
+            - laravel_crud_db
+        environment:
+            MYSQL_USER: root
+            MYSQL_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: root
+
+
+    laravel_crud_db:
+        image: mysql:latest
+        ports:
+            - "3307:3306"
+        environment:
+            MYSQL_DATABASE: larave_crud
+            MYSQL_ROOT_PASSWORD: root
+        volumes:
+            - persistent:/var/lib/mysql
+        networks:
+            - default
+
+
+volumes:
+    persistent:
