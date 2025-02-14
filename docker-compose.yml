@@ -1,43 +1,47 @@
-version: "3"
+# version: "3.8"  # (if docker compose version < v2.x.x, need to add version else no need. Compose v2+ automatically detects the latest format.)
 services:
     laravel_crud_project:
         build:
             context: .
             dockerfile: Dockerfile
+        container_name: laravel_crud_project
         ports:
-            - "8081:8000"
+            - "${APP_PORT}:${CONTAINER_PORT}"
         volumes:
-            - "./:/var/www/html/"
+            - ./:/var/www/html/
         depends_on:
-            - laravel_crud_db
+            laravel_crud_db:
+                condition: service_healthy
         networks: 
-            - default
-
-
-    phpmyadmin:
-        image: phpmyadmin
-        ports:
-            - "82:80"
-        depends_on:
-            - laravel_crud_db
-        environment:
-            MYSQL_USER: root
-            MYSQL_PASSWORD: root
-            MYSQL_ROOT_PASSWORD: root
+            - laravel_network
+        restart: always
+        entrypoint: ["/var/www/html/entrypoint.sh"]
 
 
     laravel_crud_db:
         image: mysql:latest
+        container_name: laravel_crud_mysql
         ports:
             - "3307:3306"
         environment:
-            MYSQL_DATABASE: larave_crud
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: ${DB_DATABASE}
+            # MYSQL_USER: ${DB_USERNAME}
+            # MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+        restart: always
         volumes:
             - persistent:/var/lib/mysql
-        networks:
-            - default
-
+        networks: 
+            - laravel_network
+        healthcheck:
+            test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$MYSQL_ROOT_PASSWORD || exit 1"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
 volumes:
     persistent:
+
+networks:
+    laravel_network:
+        driver: bridge

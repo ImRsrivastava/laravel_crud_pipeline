@@ -1,7 +1,5 @@
-# Use the official PHP 8.2 image with Apache
 FROM php:8.2-apache
 
-# Set the working directory in the container
 WORKDIR /var/www/html
 
 # Install necessary system dependencies and PHP extensions
@@ -38,24 +36,19 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Enable Apache rewrite module
 RUN a2enmod rewrite
 
-# Copy application code into the container
-COPY . /var/www/html/
+# Copy application code and set ownership while copying
+COPY --chown=www-data:www-data . /var/www/html
 
-# Set file permissions for Apache user
-RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 755 /var/www/html
+# Set correct permissions only for necessary directories
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Install Laravel dependencies via Composer
 RUN composer install --ignore-platform-reqs --no-dev
 
 # Clear Laravel caches and optimize
-RUN php artisan optimize:clear
 RUN php artisan config:clear
 RUN php artisan route:clear
 RUN php artisan view:clear
-
-# Run migrations (optional, only if you want to do this on build)
-RUN php artisan migrate --force
 
 # Expose the container's port
 EXPOSE 8000
