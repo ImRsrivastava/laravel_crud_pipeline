@@ -1,18 +1,18 @@
 #!/bin/sh
 
 echo "Waiting for MySQL to be ready..."
-sleep 10
+until php artisan migrate:status > /dev/null 2>&1; do
+    echo "Waiting for MySQL..."
+    sleep 3
+done
+echo "MySQL is ready!"
 
 echo "Running migrations..."
 php artisan migrate --force
 
-# Capture the port from the .env file or use the default 8081 from docker-compose.yml
-PORT=$(grep -oP '(?<=^CONTAINER_PORT=).*' .env)
-PORT=${PORT:-8000}  # Default to 8000 if not set in .env
-
-echo "Starting Laravel project on port $PORT..."
-exec php artisan serve --host 0.0.0.0 --port $PORT
+echo "Clearing caches..."
+php artisan config:cache
+php artisan route:cache
 
 echo "Starting Apache..."
 exec apache2-foreground
-

@@ -51,7 +51,7 @@ RUN php artisan route:clear
 RUN php artisan view:clear
 
 # Expose the container's port
-EXPOSE 8000
+EXPOSE 80
 
 # Start Apache server
 CMD ["apache2-foreground"]
