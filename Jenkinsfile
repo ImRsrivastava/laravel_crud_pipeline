@@ -4,8 +4,11 @@ pipeline {
     environment {
         DOCKER_IMAGE = "rishabh0205/apache-laravel"
         DOCKER_IMAGE_TAG = '1.0'
+        DOCKER_HUB_CREDENTIAL_ID = "c53e2307-b935-47eb-921a-c6be9361d071"
+        
         PROJECT_CONTAINER_NAME = "laravel_crud_project"
         MYSQL_CONTAINER_NAME = "laravel_crud_mysql"
+        
         GIT_CREDENTIAL_ID = "5a46ae81-2440-482a-9298-ae51ee245343"
         GIT_BRANCH = 'master'
         GIT_REPO_URL = 'https://github.com/ImRsrivastava/laravel_crud_pipeline.git'
@@ -29,8 +32,12 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    sh "echo '${env.DOCKER_HUB_PASSWORD}' | docker login -u '${env.DOCKER_HUB_USERNAME}' --password-stdin"
-                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}"
+                    withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CREDENTIAL_ID', 
+                                                     passwordVariable: 'DOCKER_PASSWORD', 
+                                                     usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}"
+                    }
                 }
             }
         }
