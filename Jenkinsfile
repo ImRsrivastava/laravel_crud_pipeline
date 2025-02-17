@@ -7,7 +7,7 @@ pipeline {
         MYSQL_CONTAINER_NAME = "laravel_crud_mysql"
         GIT_CREDENTIAL_ID = "5a46ae81-2440-482a-9298-ae51ee245343"
         GIT_BRANCH = 'master'
-        GIT_REPO_URL = 'git@github.com:ImRsrivastava/laravel_crud_pipeline.git'
+        GIT_REPO_URL = 'https://github.com/ImRsrivastava/laravel_crud_pipeline.git'
     }
 
     stages {
