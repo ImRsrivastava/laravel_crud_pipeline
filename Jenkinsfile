@@ -4,12 +4,12 @@ pipeline {
     environment {
         DOCKER_IMAGE = "rishabh0205/apache-laravel"
         DOCKER_IMAGE_TAG = '1.0'
-        DOCKER_HUB_CREDENTIAL_ID = "29344cb0-4832-4f22-ab3b-a97fdd1b5d6e"
+        DOCKER_HUB_CREDENTIAL_ID = "2c28847c-1477-4796-84b1-7106b49ea90e"
         
         PROJECT_CONTAINER_NAME = "laravel_crud_project"
         MYSQL_CONTAINER_NAME = "laravel_crud_mysql"
         
-        GIT_CREDENTIAL_ID = "5a46ae81-2440-482a-9298-ae51ee245343"
+        GIT_CREDENTIAL_ID = "369f938f-e3b7-4ce6-a20c-820eded714b0"
         GIT_BRANCH = 'master'
         GIT_REPO_URL = 'https://github.com/ImRsrivastava/laravel_crud_pipeline.git'
     }
