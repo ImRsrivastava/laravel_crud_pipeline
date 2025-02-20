@@ -72,10 +72,20 @@ pipeline {
 
     post {
         success {
-            echo "Deployment successful!"
+            emailext (
+                subject: "Pipeline Deployment Successful",
+                body: "Deployment of Apache-Laravel-CICD-Pipeline Project was successful!",
+                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+                to: 'rishabh.sr@cisinlabs.com'
+            )
         }
         failure {
-            echo "Deployment failed! Check logs."
+            emailext (
+                subject: "Deployment Failed",
+                body: "Deployment of Apache-Laravel-CICD-Pipeline Project failed. Check logs in Jenkins.",
+                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+                to: 'rishabh.sr@cisinlabs.com'
+            )
         }
     }
 }
