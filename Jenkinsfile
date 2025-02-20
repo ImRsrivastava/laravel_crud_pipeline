@@ -15,6 +15,13 @@ pipeline {
     }
 
     stages {
+        stage('Prepare Workspace Permissions & Remove Stale Lock File') {
+            steps {
+                sh 'sudo chown -R jenkins:jenkins ${WORKSPACE}'
+                sh 'sudo rm -f ${WORKSPACE}/.git/config.lock'
+            }
+        }
+
         stage('Checkout Code') {
             steps {
                 git branch: "${GIT_BRANCH}", credentialsId: "${GIT_CREDENTIAL_ID}", url: "${GIT_REPO_URL}"
@@ -67,7 +74,9 @@ pipeline {
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan cache:clear"
 
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} bash -c 'chown -R www-data:www-data /var/www/html && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache'"
-                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} apachectl restart"
+                    
+                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} service apache2 restart"
+                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} apachectl configtest"
                 }
             }
         }
