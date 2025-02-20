@@ -64,7 +64,7 @@ pipeline {
             steps {
                 script {
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan migrate --force"
-                    sh "docker exec -i ${MYSQL_CONTAINER_NAME} php artisan cache:clear"
+                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan cache:clear"
                 }
             }
         }
