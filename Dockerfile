@@ -1,5 +1,7 @@
+# Use the official PHP with Apache image
 FROM php:8.2-apache
 
+# Set the working directory in the container
 WORKDIR /var/www/html
 
 # Install necessary system dependencies and PHP extensions
@@ -33,24 +35,28 @@ RUN docker-php-ext-install \
 # Install Composer globally
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copy application code and set ownership while copying
+# Copy Apache Virtual Host configuration file
+COPY laravel-crud.conf /etc/apache2/sites-available/laravel-crud.conf
+
+# Copy Laravel application code and set ownership
 COPY --chown=www-data:www-data . /var/www/html
 
-# Set correct permissions only for necessary directories
+# Set correct permissions for Laravel directories
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Install Laravel dependencies via Composer
-RUN composer install --ignore-platform-reqs --no-dev
+RUN composer install --ignore-platform-reqs --no-dev --no-interaction --prefer-dist
 
 # Clear Laravel caches and optimize
 RUN php artisan config:clear
 RUN php artisan route:clear
 RUN php artisan view:clear
 
-# Update Apache configuration to use Laravel's public directory
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/laravel-crud.conf
-# Enable your custom site
+# Enable the custom Virtual Host and disable the default one
 RUN a2ensite laravel-crud.conf && a2dissite 000-default.conf
+
+# Enable Apache rewrite module
+RUN a2enmod rewrite
 
 # Expose the container's port
 EXPOSE 80
