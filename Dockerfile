@@ -44,6 +44,7 @@ RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Install Laravel dependencies via Composer
 RUN composer install --ignore-platform-reqs --no-dev
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/laravel-crud.conf
 
 # Clear Laravel caches and optimize
 RUN php artisan config:clear
