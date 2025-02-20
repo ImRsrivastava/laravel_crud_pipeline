@@ -63,7 +63,6 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // This ensures that if a volume mount overrides your code, the container installs the vendor dependencies.
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} composer install --ignore-platform-reqs --no-dev"
                 }
             }
@@ -74,11 +73,6 @@ pipeline {
                 script {
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan migrate --force"
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan cache:clear"
-
-                    // sh "docker exec -i ${PROJECT_CONTAINER_NAME} bash -c 'chown -R www-data:www-data /var/www/html && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache'"
-                    
-                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} service apache2 restart"
-                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} apachectl configtest"
                 }
             }
         }

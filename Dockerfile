@@ -58,8 +58,14 @@ RUN a2ensite laravel-crud.conf && a2dissite 000-default.conf
 # Enable Apache rewrite module
 RUN a2enmod rewrite
 
+COPY entrypoint.sh /var/www/html/entrypoint.sh
+RUN chmod +x /var/www/html/entrypoint.sh
+
 # Expose the container's port
 EXPOSE 80
+
+# Set the entrypoint to run your script
+ENTRYPOINT ["/var/www/html/entrypoint.sh"]
 
 # Start Apache server
 CMD ["apache2-foreground"]

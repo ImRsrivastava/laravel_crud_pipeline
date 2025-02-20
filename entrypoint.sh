@@ -18,5 +18,11 @@ echo "Setting up permissions..."
 chown -R www-data:www-data /var/www/html
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+echo "Restarting Apache..."
+service apache2 restart
+
+echo "Running Apache configuration test..."
+apachectl configtest
+
 echo "Starting Apache..."
 exec apache2-foreground
