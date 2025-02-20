@@ -75,7 +75,7 @@ pipeline {
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan migrate --force"
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan cache:clear"
 
-                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} bash -c 'chown -R www-data:www-data /var/www/html && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache'"
+                    // sh "docker exec -i ${PROJECT_CONTAINER_NAME} bash -c 'chown -R www-data:www-data /var/www/html && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache'"
                     
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} service apache2 restart"
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} apachectl configtest"
