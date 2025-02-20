@@ -33,15 +33,6 @@ RUN docker-php-ext-install \
 # Install Composer globally
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Enable Apache rewrite module
-RUN a2enmod rewrite
-
-# Copy your custom Apache configuration into the container
-COPY laravel-crud.conf /etc/apache2/sites-available/laravel-crud.conf
-
-# Enable your custom site
-RUN a2ensite laravel-crud.conf && a2dissite 000-default.conf
-
 # Copy application code and set ownership while copying
 COPY --chown=www-data:www-data . /var/www/html
 
@@ -50,12 +41,16 @@ RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Install Laravel dependencies via Composer
 RUN composer install --ignore-platform-reqs --no-dev
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/laravel-crud.conf
 
 # Clear Laravel caches and optimize
 RUN php artisan config:clear
 RUN php artisan route:clear
 RUN php artisan view:clear
+
+# Update Apache configuration to use Laravel's public directory
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/laravel-crud.conf
+# Enable your custom site
+RUN a2ensite laravel-crud.conf && a2dissite 000-default.conf
 
 # Expose the container's port
 EXPOSE 80
