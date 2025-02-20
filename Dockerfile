@@ -36,6 +36,12 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Enable Apache rewrite module
 RUN a2enmod rewrite
 
+# Copy your custom Apache configuration into the container
+COPY laravel-crud.conf /etc/apache2/sites-available/laravel-crud.conf
+
+# Enable your custom site
+RUN a2ensite laravel-crud.conf && a2dissite 000-default.conf
+
 # Copy application code and set ownership while copying
 COPY --chown=www-data:www-data . /var/www/html
 

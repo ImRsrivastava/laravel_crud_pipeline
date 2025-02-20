@@ -9,8 +9,8 @@ pipeline {
         PROJECT_CONTAINER_NAME = "laravel_crud_project"
         MYSQL_CONTAINER_NAME = "laravel_crud_mysql"
         
-        GIT_CREDENTIAL_ID = "f08df267-9e79-4788-afa1-5e5deca96b63"
         GIT_BRANCH = 'master'
+        GIT_CREDENTIAL_ID = "f08df267-9e79-4788-afa1-5e5deca96b63"
         GIT_REPO_URL = 'https://github.com/ImRsrivastava/laravel_crud_pipeline.git'
     }
 
