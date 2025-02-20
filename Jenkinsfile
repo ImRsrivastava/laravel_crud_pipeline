@@ -60,11 +60,14 @@ pipeline {
             }
         }
 
-        stage('Run Migrations & Clear Cache') {
+        stage('Run Migrations, Clear Cache & Setting up Permission') {
             steps {
                 script {
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan migrate --force"
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan cache:clear"
+                    
+                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} chown -R www-data:www-data /var/www/html"
+                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache"
                 }
             }
         }

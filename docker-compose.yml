@@ -9,6 +9,7 @@ services:
             - "${APP_PORT}:${CONTAINER_PORT}"
         volumes:
             - .:/var/www/html/
+            - ./laravel-crud.conf:/etc/apache2/sites-available/laravel-crud.conf
         depends_on:
             laravel_crud_db:
                 condition: service_healthy

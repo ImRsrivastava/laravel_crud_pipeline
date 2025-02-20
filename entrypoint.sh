@@ -14,5 +14,9 @@ echo "Clearing caches..."
 php artisan config:cache
 php artisan route:cache
 
+echo "Setting up permissions..."
+chown -R www-data:www-data /var/www/html
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
 echo "Starting Apache..."
 exec apache2-foreground
