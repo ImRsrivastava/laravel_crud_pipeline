@@ -51,6 +51,15 @@ pipeline {
             }
         }
 
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // This ensures that if a volume mount overrides your code, the container installs the vendor dependencies.
+                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} composer install --ignore-platform-reqs --no-dev"
+                }
+            }
+        }
+
         stage('Run Migrations & Clear Cache') {
             steps {
                 script {
