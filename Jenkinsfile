@@ -12,13 +12,15 @@ pipeline {
         GIT_BRANCH = 'master'
         GIT_CREDENTIAL_ID = "f08df267-9e79-4788-afa1-5e5deca96b63"
         GIT_REPO_URL = 'https://github.com/ImRsrivastava/laravel_crud_pipeline.git'
+
+        JENKINS_WORKSPACE = '/var/lib/jenkins/workspace/Apache-Laravel-CICD-Pipeline'
     }
 
     stages {
         stage('Prepare Workspace Permissions & Remove Stale Lock File') {
             steps {
-                sh 'sudo chown -R jenkins:jenkins ${WORKSPACE}'
-                sh 'sudo rm -f ${WORKSPACE}/.git/config.lock'
+                sh "sudo chown -R jenkins:jenkins ${JENKINS_WORKSPACE}"
+                sh "sudo rm -f ${JENKINS_WORKSPACE}/.git/config.lock"
             }
         }
 
