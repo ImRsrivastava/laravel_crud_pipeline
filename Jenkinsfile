@@ -12,18 +12,27 @@ pipeline {
         GIT_REPO_URL = 'https://github.com/ImRsrivastava/laravel_crud_pipeline.git'
         JENKINS_WORKSPACE = '/var/lib/jenkins/workspace/Apache-Laravel-CICD-Pipeline'
     }
+    options {
+        skipDefaultCheckout()  // Prevents Jenkins from running default checkout
+    }
 
     stages {
-        stage('Checkout Code') {
+        stage('Prepare Workspace') {
             steps {
-                git branch: "${GIT_BRANCH}", credentialsId: "${GIT_CREDENTIAL_ID}", url: "${GIT_REPO_URL}"
+                script {
+                    sh "sudo chown -R jenkins:jenkins ${JENKINS_WORKSPACE}"
+                    sh "sudo chmod -R 775 ${JENKINS_WORKSPACE}"
+                    sh "sudo rm -f ${JENKINS_WORKSPACE}/.git/config.lock"
+                }
             }
         }
 
-        stage('Prepare Workspace Permissions & Remove Stale Lock File') {
+        stage('Checkout Code') {
             steps {
-                sh "sudo chown -R jenkins:jenkins ${JENKINS_WORKSPACE}"
-                sh "sudo rm -f ${JENKINS_WORKSPACE}/.git/config.lock"
+                checkout([$class: 'GitSCM', 
+                    branches: [[name: "${GIT_BRANCH}"]],
+                    userRemoteConfigs: [[url: "${GIT_REPO_URL}", credentialsId: "${GIT_CREDENTIAL_ID}"]]
+                ])
             }
         }
 
