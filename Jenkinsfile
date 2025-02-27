@@ -66,22 +66,24 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install Dependencies, Run Migrations & Clear Cache') {
             steps {
                 script {
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} composer install --ignore-platform-reqs --no-dev"
-                }
-            }
-        }
-
-        stage('Run Migrations, Clear Cache & Setting up Permission') {
-            steps {
-                script {
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan migrate --force"
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan cache:clear"
                 }
             }
         }
+
+        // stage('Run Migrations, Clear Cache & Setting up Permission') {
+        //     steps {
+        //         script {
+        //             sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan migrate --force"
+        //             sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan cache:clear"
+        //         }
+        //     }
+        // }
     }
 
     post {
