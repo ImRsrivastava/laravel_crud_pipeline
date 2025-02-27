@@ -77,7 +77,10 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} composer install --ignore-platform-reqs --no-dev"
+                    sh """
+                        docker exec -i ${PROJECT_CONTAINER_NAME} git config --global --add safe.directory /var/www/html
+                        docker exec -i ${PROJECT_CONTAINER_NAME} composer install --ignore-platform-reqs --no-dev
+                    """
                 }
             }
         }
