@@ -66,24 +66,36 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies, Run Migrations & Clear Cache') {
+        stage('Install Dependencies') {
             steps {
                 script {
                     sh "docker exec -i ${PROJECT_CONTAINER_NAME} composer install --ignore-platform-reqs --no-dev"
-                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan migrate --force"
-                    sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan cache:clear"
                 }
             }
         }
 
-        // stage('Run Migrations, Clear Cache & Setting up Permission') {
-        //     steps {
-        //         script {
-        //             sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan migrate --force"
-        //             sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan cache:clear"
-        //         }
-        //     }
-        // }
+        stage('Run Migrations') {
+            steps {
+                script {
+                    def retryCount = 5
+                    def success = false
+                    for (int i = 0; i < retryCount; i++) {
+                        try {
+                            sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan migrate --force"
+                            sh "docker exec -i ${PROJECT_CONTAINER_NAME} php artisan cache:clear"
+                            success = true
+                            break
+                        } catch (Exception e) {
+                            echo "Migration attempt ${i + 1} failed, retrying in 5 seconds..."
+                            sleep(5)
+                        }
+                    }
+                    if (!success) {
+                        error "Migration failed after ${retryCount} attempts"
+                    }
+                }
+            }
+        }
     }
 
     post {
