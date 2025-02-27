@@ -14,16 +14,16 @@ pipeline {
     }
 
     stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: "${GIT_BRANCH}", credentialsId: "${GIT_CREDENTIAL_ID}", url: "${GIT_REPO_URL}"
+            }
+        }
+
         stage('Prepare Workspace Permissions & Remove Stale Lock File') {
             steps {
                 sh "sudo chown -R jenkins:jenkins ${JENKINS_WORKSPACE}"
                 sh "sudo rm -f ${JENKINS_WORKSPACE}/.git/config.lock"
-            }
-        }
-
-        stage('Checkout Code') {
-            steps {
-                git branch: "${GIT_BRANCH}", credentialsId: "${GIT_CREDENTIAL_ID}", url: "${GIT_REPO_URL}"
             }
         }
 
