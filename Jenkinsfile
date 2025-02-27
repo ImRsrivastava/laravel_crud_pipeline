@@ -62,6 +62,14 @@ pipeline {
                 script {
                     sh "docker-compose down"
                     sh "docker-compose up --build -d"
+
+                    // Wait for Laravel container to be fully running
+                    sh '''
+                        echo "Waiting for Laravel container to be up..."
+                        while ! docker ps | grep -q ${PROJECT_CONTAINER_NAME}; do
+                            sleep 2
+                        done
+                    '''
                 }
             }
         }
@@ -77,6 +85,13 @@ pipeline {
         stage('Run Migrations') {
             steps {
                 script {
+                    sh '''
+                        echo "Waiting for MySQL to be ready..."
+                        until docker exec -i ${PROJECT_CONTAINER_NAME} mysqladmin ping -h ${MYSQL_CONTAINER_NAME} --silent; do
+                            sleep 3
+                        done
+                    '''
+
                     def retryCount = 5
                     def success = false
                     for (int i = 0; i < retryCount; i++) {
