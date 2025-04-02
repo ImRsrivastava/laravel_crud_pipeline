@@ -1,8 +1,12 @@
 #!/bin/sh
 
-
+# Installing Required Dependencies
 echo "Install dependencies..."
 composer install --ignore-platform-reqs --no-dev --no-interaction --prefer-dist
+
+# Set Git safe directory
+echo "Setting Git safe directory..."
+git config --global --add safe.directory /var/www/html
 
 echo "Waiting for MySQL to be ready..."
 until php artisan migrate:status > /dev/null 2>&1; do
