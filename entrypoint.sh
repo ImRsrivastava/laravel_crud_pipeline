@@ -1,5 +1,9 @@
 #!/bin/sh
 
+
+echo "Install dependencies..."
+composer install --ignore-platform-reqs --no-dev --no-interaction --prefer-dist
+
 echo "Waiting for MySQL to be ready..."
 until php artisan migrate:status > /dev/null 2>&1; do
     echo "Waiting for MySQL..."
